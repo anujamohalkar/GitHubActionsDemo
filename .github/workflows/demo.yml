@@ -1,8 +1,43 @@
-name: hello-world
-on: push
+name: Java Build and Run
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  my-job:
+  build-and-run:
     runs-on: ubuntu-latest
+
     steps:
-      - name: my-step
-        run: echo "Hello World!"
+    # Checkout the repository code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up Java
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17' # Change to your preferred Java version
+
+    # Compile the Java code
+    - name: Compile Java Code
+      run: |
+        mkdir -p out
+        javac -d out *.java
+
+    # Create a JAR file
+    - name: Create JAR File
+      run: |
+        cd out
+        jar cfe HelloWorld.jar HelloWorld HelloWorld.class
+
+    # Run the JAR file
+    - name: Run JAR File
+      run: |
+        cd out
+        java -jar HelloWorld.jar
